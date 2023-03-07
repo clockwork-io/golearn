@@ -64,7 +64,9 @@ func (r *InformationGainRatioRuleGenerator) GetSplitRuleFromSelection(considered
 		}
 		informationGain = baseEntropy - localEntropy
 		informationGainRatio := informationGain / localEntropy
-		if informationGainRatio > maxRatio {
+		equalityCheck := checkSplitEquality(selectedVal, splitVal,
+			selectedAttribute, s, informationGainRatio, maxRatio)
+		if informationGainRatio > maxRatio || equalityCheck {
 			maxRatio = informationGainRatio
 			selectedAttribute = s
 			selectedVal = splitVal

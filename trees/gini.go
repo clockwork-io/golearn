@@ -54,7 +54,9 @@ func (g *GiniCoefficientRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 			proposedDist = base.GetClassDistributionAfterSplit(f, s)
 		}
 		avgGini := computeAverageGiniIndex(proposedDist)
-		if avgGini < minGini {
+		equalityCheck := checkSplitEquality(selectedVal, splitVal,
+			selectedAttribute, s, avgGini, minGini)
+		if avgGini < minGini || equalityCheck {
 			minGini = avgGini
 			selectedAttribute = s
 			selectedVal = splitVal

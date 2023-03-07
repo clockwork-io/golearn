@@ -101,6 +101,15 @@ func (d *DecisionTreeRule) String() string {
 	return fmt.Sprintf("DecisionTreeRule(%s)", d.SplitAttr.GetName())
 }
 
+func checkSplitEquality(selectedVal float64, splitVal float64,
+	selectedAttribute base.Attribute, splitAttribute base.Attribute,
+	score float64, compareScore float64) bool {
+	equalScore := score == compareScore
+	preferOne := (selectedVal == 0) && (splitVal == 1)
+	lexicallyFirst := splitAttribute.GetName() < selectedAttribute.GetName()
+	return equalScore && (preferOne || lexicallyFirst)
+}
+
 // DecisionTreeNode represents a given portion of a decision tree.
 type DecisionTreeNode struct {
 	Type      NodeType                     `json:"node_type"`
