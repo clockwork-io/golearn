@@ -534,7 +534,7 @@ type ID3DecisionTree struct {
 // ratio and InformationGain as the rule generator.
 // If the ratio is less than 0.001, the tree isn't pruned.
 func NewID3DecisionTree(prune float64) *ID3DecisionTree {
-	panic("Can't create decision tree.")
+	// panic("Can't create decision tree.")
 	return &ID3DecisionTree{
 		base.BaseClassifier{},
 		nil,
