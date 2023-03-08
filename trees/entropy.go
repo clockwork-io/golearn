@@ -1,6 +1,7 @@
 package trees
 
 import (
+	"fmt"
 	"math"
 	"sort"
 
@@ -36,6 +37,8 @@ func (r *InformationGainRuleGenerator) GenerateSplitRule(f base.FixedDataGrid) *
 // IMPORTANT: passing a zero-length consideredAttributes parameter will panic()
 func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttributes []base.Attribute, f base.FixedDataGrid) *DecisionTreeRule {
 
+	fmt.Println("Getting split rule from selection")
+
 	var selectedAttribute base.Attribute
 
 	// Parameter check
@@ -66,8 +69,10 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 			localEntropy := getSplitEntropy(proposedClassDist)
 			informationGain = baseEntropy - localEntropy
 		}
-
-		if informationGain > maxGain {
+		fmt.Println("Checking split equality")
+		equalityCheck := checkSplitEquality(selectedVal, splitVal,
+			selectedAttribute, s, informationGain, maxGain)
+		if informationGain > maxGain || equalityCheck {
 			maxGain = informationGain
 			selectedAttribute = s
 			selectedVal = splitVal
