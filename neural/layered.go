@@ -2,11 +2,12 @@ package neural
 
 import (
 	"fmt"
-	"github.com/sjwhitworth/golearn/base"
-	"github.com/sjwhitworth/golearn/filters"
-	"gonum.org/v1/gonum/mat"
 	"math"
 	"math/rand"
+
+	"github.com/clockwork-io/golearn/base"
+	"github.com/clockwork-io/golearn/filters"
+	"gonum.org/v1/gonum/mat"
 )
 
 // MultiLayerNet creates a new Network which is conceptually

@@ -1,14 +1,15 @@
 package trees
 
 import (
-	"github.com/sjwhitworth/golearn/base"
-	"github.com/sjwhitworth/golearn/evaluation"
-	"github.com/sjwhitworth/golearn/filters"
-	. "github.com/smartystreets/goconvey/convey"
 	"io/ioutil"
 	"math/rand"
 	"os"
 	"testing"
+
+	"github.com/clockwork-io/golearn/base"
+	"github.com/clockwork-io/golearn/evaluation"
+	"github.com/clockwork-io/golearn/filters"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func testCanSaveLoadPredictions(trainData, testData base.FixedDataGrid) {

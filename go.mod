@@ -1,4 +1,4 @@
-module github.com/sjwhitworth/golearn
+module github.com/clockwork-io/golearn
 
 go 1.15
 

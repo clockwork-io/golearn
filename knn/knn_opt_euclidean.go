@@ -4,9 +4,10 @@ package knn
 import "C"
 
 import (
-	"github.com/sjwhitworth/golearn/base"
 	"sort"
 	"unsafe"
+
+	"github.com/clockwork-io/golearn/base"
 )
 
 type dist C.struct_dist

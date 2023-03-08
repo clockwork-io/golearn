@@ -1,9 +1,10 @@
 package clustering
 
 import (
-	"github.com/sjwhitworth/golearn/base"
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
+
+	"github.com/clockwork-io/golearn/base"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestExpectationMaximization(t *testing.T) {

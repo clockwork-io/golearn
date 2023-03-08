@@ -2,13 +2,14 @@ package meta
 
 import (
 	"fmt"
-	"github.com/sjwhitworth/golearn/base"
-	"github.com/sjwhitworth/golearn/evaluation"
-	"github.com/sjwhitworth/golearn/linear_models"
-	. "github.com/smartystreets/goconvey/convey"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/clockwork-io/golearn/base"
+	"github.com/clockwork-io/golearn/evaluation"
+	"github.com/clockwork-io/golearn/linear_models"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestOneVsAllModel(t *testing.T) {

@@ -1,11 +1,12 @@
 package ensemble
 
 import (
-	"github.com/sjwhitworth/golearn/base"
-	"github.com/sjwhitworth/golearn/evaluation"
-	. "github.com/smartystreets/goconvey/convey"
 	"io/ioutil"
 	"testing"
+
+	"github.com/clockwork-io/golearn/base"
+	"github.com/clockwork-io/golearn/evaluation"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestMultiSVMUnweighted(t *testing.T) {

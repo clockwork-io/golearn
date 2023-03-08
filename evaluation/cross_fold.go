@@ -1,8 +1,9 @@
 package evaluation
 
 import (
-	"github.com/sjwhitworth/golearn/base"
 	"math/rand"
+
+	"github.com/clockwork-io/golearn/base"
 )
 
 // GetCrossValidatedMetric returns the mean and variance of the confusion-matrix-derived

@@ -1,10 +1,11 @@
 package linear_models
 
 import (
-	"github.com/sjwhitworth/golearn/base"
-	//"github.com/sjwhitworth/golearn/filters"
-	. "github.com/smartystreets/goconvey/convey"
+	"github.com/clockwork-io/golearn/base"
+	//"github.com/clockwork-io/golearn/filters"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 	//"reflect"
 	//"fmt"
 )
