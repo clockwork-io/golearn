@@ -274,7 +274,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 		fmt.Println("No split rule. Returning.")
 		return ret
 	}
-	fmt.Println(splitRule)
+	fmt.Println(splitRule.SplitAttr, splitRule.SplitVal)
 
 	// Split the attributes based on this attribute's value
 	var splitInstances map[string]base.FixedDataGrid
