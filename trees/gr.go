@@ -35,7 +35,7 @@ func (r *InformationGainRatioRuleGenerator) GenerateSplitRule(f base.FixedDataGr
 //
 // IMPORTANT: passing a zero-length consideredAttributes parameter will panic()
 func (r *InformationGainRatioRuleGenerator) GetSplitRuleFromSelection(consideredAttributes []base.Attribute, f base.FixedDataGrid) *DecisionTreeRule {
-
+	panic("Testing if changes here affect changes there.")
 	fmt.Println("Getting split rule from selection")
 
 	var selectedAttribute base.Attribute
