@@ -112,6 +112,11 @@ func checkSplitEquality(selectedVal float64, splitVal float64,
 	equalScore := score == compareScore
 	preferOne := (selectedVal == 0) && (splitVal == 1)
 	lexicallyFirst := splitAttribute.GetName() < selectedAttribute.GetName()
+
+	fmt.Println(selectedAttribute.GetName(), splitAttribute.GetName(), lexicallyFirst)
+	fmt.Println(selectedVal, splitVal, preferOne)
+	fmt.Println(compareScore, score, equalScore)
+
 	return equalScore && (preferOne || lexicallyFirst)
 }
 
