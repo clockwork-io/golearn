@@ -49,8 +49,9 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 	// Next step is to compute the information gain at this node
 	// for each randomly chosen attribute, and pick the one
 	// which maximises it
-	maxGain := math.Inf(-1)
+	maxGain := math.Inf(-1) // TODO(vikul): see if changing to 0 fixes issue of creating aggregated alert when no attribute is a good selection.
 	selectedVal := math.Inf(1)
+	// var selectedBinaryVal float64
 
 	// Compute the base entropy
 	classDist := base.GetClassDistribution(f)
@@ -60,12 +61,17 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 	for _, s := range consideredAttributes {
 		var informationGain float64
 		var splitVal float64
+		// var splitBinaryVal float64
 		if fAttr, ok := s.(*base.FloatAttribute); ok {
 			var attributeEntropy float64
 			attributeEntropy, splitVal = getNumericAttributeEntropy(f, fAttr)
 			informationGain = baseEntropy - attributeEntropy
 		} else {
 			proposedClassDist := base.GetClassDistributionAfterSplit(f, s)
+			fmt.Println(proposedClassDist)
+			// if proposedClassDist["1"] > proposedClassDist["0"] {
+			// 	splitBinaryVal = 1.0
+			// }
 			localEntropy := getSplitEntropy(proposedClassDist)
 			informationGain = baseEntropy - localEntropy
 		}
