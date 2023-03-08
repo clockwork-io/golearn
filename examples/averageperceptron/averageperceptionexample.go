@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	base "github.com/clockwclockwork-ioarn/base"
+	base "github.com/clockwork-io/golearn/base"
 	evaluation "github.com/clockwork-io/golearn/evaluation"
 	perceptron "github.com/clockwork-io/golearn/perceptron"
 )

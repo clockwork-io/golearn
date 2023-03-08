@@ -104,6 +104,11 @@ func (d *DecisionTreeRule) String() string {
 func checkSplitEquality(selectedVal float64, splitVal float64,
 	selectedAttribute base.Attribute, splitAttribute base.Attribute,
 	score float64, compareScore float64) bool {
+	// First iteration.
+	if selectedAttribute == nil {
+		return true
+	}
+
 	equalScore := score == compareScore
 	preferOne := (selectedVal == 0) && (splitVal == 1)
 	lexicallyFirst := splitAttribute.GetName() < selectedAttribute.GetName()
