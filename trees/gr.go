@@ -1,6 +1,7 @@
 package trees
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/clockwork-io/golearn/base"
@@ -35,6 +36,8 @@ func (r *InformationGainRatioRuleGenerator) GenerateSplitRule(f base.FixedDataGr
 // IMPORTANT: passing a zero-length consideredAttributes parameter will panic()
 func (r *InformationGainRatioRuleGenerator) GetSplitRuleFromSelection(consideredAttributes []base.Attribute, f base.FixedDataGrid) *DecisionTreeRule {
 
+	fmt.Println("Getting split rule from selection")
+
 	var selectedAttribute base.Attribute
 	var selectedVal float64
 
@@ -65,6 +68,7 @@ func (r *InformationGainRatioRuleGenerator) GetSplitRuleFromSelection(considered
 		}
 		informationGain = baseEntropy - localEntropy
 		informationGainRatio := informationGain / localEntropy
+		fmt.Println("Checking split equality")
 		equalityCheck := checkSplitEquality(selectedVal, splitVal,
 			selectedAttribute, s, informationGainRatio, maxRatio)
 		if informationGainRatio > maxRatio || equalityCheck {
