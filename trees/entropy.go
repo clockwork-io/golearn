@@ -69,7 +69,9 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 			localEntropy := getSplitEntropy(proposedClassDist)
 			informationGain = baseEntropy - localEntropy
 		}
-		fmt.Printf("Checking split equality. selected: %v %v, split: %v %v.\n", selectedAttribute.GetName(), selectedVal, s.GetName(), splitVal)
+		if selectedAttribute != nil {
+			fmt.Printf("Checking split equality. selected: %v %v, split: %v %v.\n", selectedAttribute.GetName(), selectedVal, s.GetName(), splitVal)
+		}
 		equalityCheck := false
 		// equalityCheck := checkSplitEquality(selectedVal, splitVal,
 		// 	selectedAttribute, s, informationGain, maxGain)
