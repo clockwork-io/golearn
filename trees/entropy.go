@@ -51,7 +51,7 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 	// which maximises it
 	maxGain := math.Inf(-1) // TODO(vikul): see if changing to 0 fixes issue of creating aggregated alert when no attribute is a good selection.
 	selectedVal := math.Inf(1)
-	// var selectedBinaryVal float64
+	var selectedBinaryVal float64
 
 	// Compute the base entropy
 	classDist := base.GetClassDistribution(f)
@@ -61,7 +61,7 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 	for _, s := range consideredAttributes {
 		var informationGain float64
 		var splitVal float64
-		// var splitBinaryVal float64
+		var splitBinaryVal float64
 		if fAttr, ok := s.(*base.FloatAttribute); ok {
 			var attributeEntropy float64
 			attributeEntropy, splitVal = getNumericAttributeEntropy(f, fAttr)
@@ -69,22 +69,23 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 		} else {
 			proposedClassDist := base.GetClassDistributionAfterSplit(f, s)
 			fmt.Println(proposedClassDist)
-			// if proposedClassDist["1"] > proposedClassDist["0"] {
-			// 	splitBinaryVal = 1.0
-			// }
+			// Only switch if no 1s on left.
+			if _, ok := proposedClassDist["0"]["1"]; !ok {
+				splitBinaryVal = 1.0
+			}
 			localEntropy := getSplitEntropy(proposedClassDist)
 			informationGain = baseEntropy - localEntropy
 		}
 		if selectedAttribute != nil {
-			fmt.Printf("Checking split equality. selected: %v %v, split: %v %v.\n", selectedAttribute.GetName(), selectedVal, s.GetName(), splitVal)
+			fmt.Printf("Checking split equality. selected: %v %v, split: %v %v.\n", selectedAttribute.GetName(), selectedBinaryVal, s.GetName(), splitBinaryVal)
 		}
-		equalityCheck := false
-		// equalityCheck := checkSplitEquality(selectedVal, splitVal,
-		// 	selectedAttribute, s, informationGain, maxGain)
+		equalityCheck := checkSplitEquality(selectedBinaryVal, splitBinaryVal,
+			selectedAttribute, s, informationGain, maxGain)
 		if informationGain > maxGain || equalityCheck {
 			maxGain = informationGain
 			selectedAttribute = s
 			selectedVal = splitVal
+			selectedBinaryVal = splitBinaryVal
 		}
 	}
 
