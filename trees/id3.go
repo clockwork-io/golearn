@@ -106,7 +106,7 @@ func checkSplitEquality(selectedVal float64, splitVal float64,
 	score float64, compareScore float64) bool {
 	// First iteration.
 	if selectedAttribute == nil {
-		return true
+		return false
 	}
 
 	// Scores must be equal.

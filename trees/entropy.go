@@ -47,7 +47,7 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 	// Next step is to compute the information gain at this node
 	// for each randomly chosen attribute, and pick the one
 	// which maximises it
-	maxGain := math.Inf(-1) // TODO(vikul): see if changing to 0 fixes issue of creating aggregated alert when no attribute is a good selection.
+	maxGain := 0.0
 	selectedVal := math.Inf(1)
 
 	// Compute the base entropy
