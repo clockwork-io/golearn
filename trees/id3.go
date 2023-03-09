@@ -109,15 +109,18 @@ func checkSplitEquality(selectedVal float64, splitVal float64,
 		return true
 	}
 
-	equalScore := score == compareScore
-	preferOne := (selectedVal == 0) && (splitVal == 1)
-	lexicallyFirst := splitAttribute.GetName() < selectedAttribute.GetName()
+	// Scores must be equal.
+	if score != compareScore {
+		return false
+	}
 
-	fmt.Println(selectedAttribute.GetName(), splitAttribute.GetName(), lexicallyFirst)
-	fmt.Println(selectedVal, splitVal, preferOne)
-	fmt.Println(compareScore, score, equalScore)
+	// If we are going from a 0 to a 1, switch.
+	if (selectedVal == 0) && (splitVal == 1) {
+		return true
+	}
 
-	return equalScore && (preferOne || lexicallyFirst)
+	// As a catch-all, pick the alphabetically first one.
+	return splitAttribute.GetName() < selectedAttribute.GetName()
 }
 
 // DecisionTreeNode represents a given portion of a decision tree.
