@@ -114,9 +114,9 @@ func checkSplitEquality(selectedVal float64, splitVal float64,
 		return false
 	}
 
-	// If we are going from a 0 to a 1, switch.
-	if (selectedVal == 0) && (splitVal == 1) {
-		return true
+	// If the two values don't match, pick the attribute that is 1.
+	if selectedVal != splitVal {
+		return splitVal == 1
 	}
 
 	// As a catch-all, pick the alphabetically first one.
