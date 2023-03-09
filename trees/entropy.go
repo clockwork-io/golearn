@@ -1,7 +1,6 @@
 package trees
 
 import (
-	"fmt"
 	"math"
 	"sort"
 
@@ -66,7 +65,6 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 			informationGain = baseEntropy - attributeEntropy
 		} else {
 			proposedClassDist := base.GetClassDistributionAfterSplit(f, s)
-			fmt.Println(proposedClassDist)
 			// Only switch if no 1s on left.
 			if _, ok := proposedClassDist["0"]["1"]; !ok {
 				splitBinaryVal = 1.0
