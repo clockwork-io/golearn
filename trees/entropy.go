@@ -37,8 +37,6 @@ func (r *InformationGainRuleGenerator) GenerateSplitRule(f base.FixedDataGrid) *
 // IMPORTANT: passing a zero-length consideredAttributes parameter will panic()
 func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttributes []base.Attribute, f base.FixedDataGrid) *DecisionTreeRule {
 
-	fmt.Println("Getting split rule from selection")
-
 	var selectedAttribute base.Attribute
 
 	// Parameter check
@@ -76,9 +74,7 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 			localEntropy := getSplitEntropy(proposedClassDist)
 			informationGain = baseEntropy - localEntropy
 		}
-		if selectedAttribute != nil {
-			fmt.Printf("Checking split equality. selected: %v %v, split: %v %v.\n", selectedAttribute.GetName(), selectedBinaryVal, s.GetName(), splitBinaryVal)
-		}
+
 		equalityCheck := checkSplitEquality(selectedBinaryVal, splitBinaryVal,
 			selectedAttribute, s, informationGain, maxGain)
 		if informationGain > maxGain || equalityCheck {

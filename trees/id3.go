@@ -211,7 +211,7 @@ func (d *DecisionTreeNode) LoadWithPrefix(reader *base.ClassifierDeserializer, p
 // InferID3Tree builds a decision tree using a RuleGenerator
 // from a set of Instances (implements the ID3 algorithm)
 func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode {
-	fmt.Println("InferID3Tree called.")
+
 	// Count the number of classes at this node
 	classes := base.GetClassDistribution(from)
 	classAttr := getClassAttr(from)
@@ -230,7 +230,6 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
 		}
-		fmt.Println("One alert value. Returning.")
 		return ret
 	}
 
@@ -256,7 +255,6 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
 		}
-		fmt.Println("No attributes left to split on. Returning.")
 		return ret
 	}
 
@@ -274,10 +272,8 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 	splitRule := with.GenerateSplitRule(from)
 	if splitRule == nil || splitRule.SplitAttr == nil {
 		// Can't determine, just return what we have
-		fmt.Println("No split rule. Returning.")
 		return ret
 	}
-	fmt.Println(splitRule.SplitAttr, splitRule.SplitVal)
 
 	// Split the attributes based on this attribute's value
 	var splitInstances map[string]base.FixedDataGrid
@@ -542,7 +538,6 @@ type ID3DecisionTree struct {
 // ratio and InformationGain as the rule generator.
 // If the ratio is less than 0.001, the tree isn't pruned.
 func NewID3DecisionTree(prune float64) *ID3DecisionTree {
-	fmt.Println("NewID3DecisionTree called.")
 	return &ID3DecisionTree{
 		base.BaseClassifier{},
 		nil,
@@ -564,7 +559,6 @@ func NewID3DecisionTreeFromRule(prune float64, rule RuleGenerator) *ID3DecisionT
 
 // Fit builds the ID3 decision tree
 func (t *ID3DecisionTree) Fit(on base.FixedDataGrid) error {
-	fmt.Println("Fit called.")
 	if t.PruneSplit > 0.001 {
 		trainData, testData := base.InstancesTrainTestSplit(on, t.PruneSplit)
 		t.Root = InferID3Tree(trainData, t.Rule)
