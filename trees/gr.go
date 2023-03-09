@@ -37,6 +37,7 @@ func (r *InformationGainRatioRuleGenerator) GetSplitRuleFromSelection(considered
 
 	var selectedAttribute base.Attribute
 	var selectedVal float64
+	var selectedBinaryVal float64
 
 	// Parameter check
 	if len(consideredAttributes) == 0 {
@@ -57,15 +58,20 @@ func (r *InformationGainRatioRuleGenerator) GetSplitRuleFromSelection(considered
 		var informationGain float64
 		var localEntropy float64
 		var splitVal float64
+		var splitBinaryVal float64
 		if fAttr, ok := s.(*base.FloatAttribute); ok {
 			localEntropy, splitVal = getNumericAttributeEntropy(f, fAttr)
 		} else {
 			proposedClassDist := base.GetClassDistributionAfterSplit(f, s)
+			// Only switch if no 1s on left.
+			if _, ok := proposedClassDist["0"]["1"]; !ok {
+				splitBinaryVal = 1.0
+			}
 			localEntropy = getSplitEntropy(proposedClassDist)
 		}
 		informationGain = baseEntropy - localEntropy
 		informationGainRatio := informationGain / localEntropy
-		equalityCheck := checkSplitEquality(selectedVal, splitVal,
+		equalityCheck := checkSplitEquality(selectedBinaryVal, splitBinaryVal,
 			selectedAttribute, s, informationGainRatio, maxRatio)
 		if informationGainRatio > maxRatio || equalityCheck {
 			maxRatio = informationGainRatio

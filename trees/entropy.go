@@ -38,6 +38,7 @@ func (r *InformationGainRuleGenerator) GenerateSplitRule(f base.FixedDataGrid) *
 func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttributes []base.Attribute, f base.FixedDataGrid) *DecisionTreeRule {
 
 	var selectedAttribute base.Attribute
+	var selectedBinaryVal float64
 
 	// Parameter check
 	if len(consideredAttributes) == 0 {
@@ -49,7 +50,6 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 	// which maximises it
 	maxGain := math.Inf(-1) // TODO(vikul): see if changing to 0 fixes issue of creating aggregated alert when no attribute is a good selection.
 	selectedVal := math.Inf(1)
-	var selectedBinaryVal float64
 
 	// Compute the base entropy
 	classDist := base.GetClassDistribution(f)

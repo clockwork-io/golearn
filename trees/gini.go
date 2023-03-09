@@ -37,6 +37,7 @@ func (g *GiniCoefficientRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 
 	var selectedAttribute base.Attribute
 	var selectedVal float64
+	var selectedBinaryVal float64
 
 	// Parameter check
 	if len(consideredAttributes) == 0 {
@@ -48,14 +49,19 @@ func (g *GiniCoefficientRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 	for _, s := range consideredAttributes {
 		var proposedDist map[string]map[string]int
 		var splitVal float64
+		var splitBinaryVal float64
 		if fAttr, ok := s.(*base.FloatAttribute); ok {
 			_, splitVal = getNumericAttributeEntropy(f, fAttr)
 			proposedDist = base.GetClassDistributionAfterThreshold(f, fAttr, splitVal)
 		} else {
 			proposedDist = base.GetClassDistributionAfterSplit(f, s)
+			// Only switch if no 1s on left.
+			if _, ok := proposedDist["0"]["1"]; !ok {
+				splitBinaryVal = 1.0
+			}
 		}
 		avgGini := computeAverageGiniIndex(proposedDist)
-		equalityCheck := checkSplitEquality(selectedVal, splitVal,
+		equalityCheck := checkSplitEquality(selectedBinaryVal, splitBinaryVal,
 			selectedAttribute, s, avgGini, minGini)
 		if avgGini < minGini || equalityCheck {
 			minGini = avgGini
