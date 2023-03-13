@@ -279,9 +279,10 @@ func DecomposeOnNumericAttributeThreshold(inst FixedDataGrid, at Attribute, val 
 	// Construct the new Attribute set
 	newAttrs := make([]Attribute, 0)
 	for _, a := range inst.AllAttributes() {
-		if a.Equals(at) {
-			continue
-		}
+		// To find ranges, we don't want to discard float attributes.
+		// if a.Equals(at) {
+		// 	continue
+		// }
 		newAttrs = append(newAttrs, a)
 	}
 
