@@ -1,7 +1,6 @@
 package trees
 
 import (
-	"fmt"
 	"math"
 	"sort"
 
@@ -160,13 +159,11 @@ func getNumericAttributeEntropy(f base.FixedDataGrid, attr *base.FloatAttribute)
 		}
 		prevVal = val
 		splitEntropy := getSplitEntropyFast(splitDist)
-		fmt.Println(val, splitEntropy)
 		if splitEntropy < minSplitEntropy {
 			minSplitEntropy = splitEntropy
 			minSplitVal = val
 		}
 	}
-	fmt.Println("min: ", minSplitEntropy, minSplitVal)
 	return minSplitEntropy, minSplitVal
 }
 
