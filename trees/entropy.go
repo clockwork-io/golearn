@@ -166,7 +166,7 @@ func getNumericAttributeEntropy(f base.FixedDataGrid, attr *base.FloatAttribute)
 			minSplitVal = val
 		}
 	}
-
+	fmt.Println("min: ", minSplitEntropy, minSplitVal)
 	return minSplitEntropy, minSplitVal
 }
 
