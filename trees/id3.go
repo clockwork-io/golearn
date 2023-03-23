@@ -114,8 +114,12 @@ func checkSplitEquality(selectedVal float64, splitVal float64,
 		return false
 	}
 
-	// If the two values don't match, pick the attribute that is 1.
-	if selectedVal != splitVal {
+	// If we have two binary attributes and the values don't match,
+	// pick the attribute that is 1.
+	_, selectedBinary := selectedAttribute.(*base.BinaryAttribute)
+	_, splitBinary := splitAttribute.(*base.BinaryAttribute)
+	binary := selectedBinary && splitBinary
+	if binary && selectedVal != splitVal {
 		return splitVal == 1
 	}
 
