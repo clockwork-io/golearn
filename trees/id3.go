@@ -216,6 +216,11 @@ func (d *DecisionTreeNode) LoadWithPrefix(reader *base.ClassifierDeserializer, p
 // from a set of Instances (implements the ID3 algorithm)
 func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode {
 
+	numRows, _ := from.Size()
+	if numRows == 450 {
+		fmt.Println("hi")
+	}
+
 	// Count the number of classes at this node
 	classes := base.GetClassDistribution(from)
 	classAttr := getClassAttr(from)
