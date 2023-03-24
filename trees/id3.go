@@ -234,6 +234,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
 		}
+		fmt.Println("one class", ret)
 		return ret
 	}
 
@@ -259,6 +260,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
 		}
+		fmt.Println("2 columns left", ret)
 		return ret
 	}
 
@@ -274,6 +276,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 
 	// Generate the splitting rule
 	splitRule := with.GenerateSplitRule(from)
+	fmt.Println("generating split rule")
 	if splitRule == nil || splitRule.SplitAttr == nil {
 		// Can't determine, just return what we have
 		return ret
