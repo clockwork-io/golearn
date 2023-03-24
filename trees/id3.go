@@ -234,7 +234,6 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
 		}
-		fmt.Println("one class", ret, maxClass)
 		return ret
 	}
 
@@ -248,20 +247,27 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 		}
 	}
 
-	// If there are no more Attributes left to split on,
-	// return a DecisionTreeLeaf with the majority class
+	// If there are no more non-float Attributes left to split on,
+	// return a DecisionTreeLeaf with the majority class.
 	cols, _ := from.Size()
 	if cols == 2 {
-		ret := &DecisionTreeNode{
-			LeafNode,
-			nil,
-			classes,
-			maxClass,
-			classAttr,
-			&DecisionTreeRule{nil, 0.0},
+		for _, attr := range from.AllAttributes() {
+			if attr == classAttr {
+				continue
+			}
+			if _, ok := attr.(*base.FloatAttribute); !ok {
+				ret := &DecisionTreeNode{
+					LeafNode,
+					nil,
+					classes,
+					maxClass,
+					classAttr,
+					&DecisionTreeRule{nil, 0.0},
+				}
+				fmt.Println("2 columns left", ret, maxClass, classes)
+				return ret
+			}
 		}
-		fmt.Println("2 columns left", ret, maxClass, classes)
-		return ret
 	}
 
 	// Generate a return structure
