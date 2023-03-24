@@ -216,10 +216,10 @@ func (d *DecisionTreeNode) LoadWithPrefix(reader *base.ClassifierDeserializer, p
 // from a set of Instances (implements the ID3 algorithm)
 func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode {
 
-	numRows, _ := from.Size()
-	if numRows == 480 {
-		fmt.Println("hi")
-	}
+	// numRows, _ := from.Size()
+	// if numRows == 480 {
+	// 	fmt.Println("hi")
+	// }
 
 	// Count the number of classes at this node
 	classes := base.GetClassDistribution(from)
@@ -297,7 +297,8 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 	for k := range splitInstances {
 		newInstances := splitInstances[k]
 		if splitRule.SplitAttr.GetName() == "dst_" && k == "agent-04" {
-			fmt.Println(newInstances)
+			numRows, numCols := newInstances.Size()
+			fmt.Println(newInstances, numRows, numCols)
 		}
 		ret.Children[k] = InferID3Tree(newInstances, with)
 	}
