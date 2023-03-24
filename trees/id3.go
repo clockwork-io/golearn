@@ -264,7 +264,6 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 					classAttr,
 					&DecisionTreeRule{nil, 0.0},
 				}
-				fmt.Println("2 columns left", ret, maxClass, classes)
 				return ret
 			}
 		}
@@ -282,7 +281,6 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 
 	// Generate the splitting rule
 	splitRule := with.GenerateSplitRule(from)
-	fmt.Println("generating split rule")
 	if splitRule == nil || splitRule.SplitAttr == nil {
 		// Can't determine, just return what we have
 		return ret
@@ -297,18 +295,10 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 		splitInstances = base.DecomposeOnAttributeValues(from, splitRule.SplitAttr)
 	}
 
-	fmt.Println(splitRule.SplitAttr.GetName())
-	for k, inst := range splitInstances {
-		fmt.Println(k, inst)
-	}
-
 	// Create new children from these attributes
 	ret.Children = make(map[string]*DecisionTreeNode)
 	for k := range splitInstances {
 		newInstances := splitInstances[k]
-		if splitRule.SplitAttr.GetName() == "dst_" && k == "agent-04" {
-			fmt.Println(newInstances)
-		}
 		ret.Children[k] = InferID3Tree(newInstances, with)
 	}
 	ret.SplitRule = splitRule
