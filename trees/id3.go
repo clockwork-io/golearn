@@ -291,7 +291,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 	ret.Children = make(map[string]*DecisionTreeNode)
 	for k := range splitInstances {
 		newInstances := splitInstances[k]
-		if k == "agent-04" {
+		if classAttr.GetName() == "dst_" && k == "agent-04" {
 			fmt.Println(newInstances)
 		}
 		ret.Children[k] = InferID3Tree(newInstances, with)
