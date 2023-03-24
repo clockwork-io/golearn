@@ -217,7 +217,7 @@ func (d *DecisionTreeNode) LoadWithPrefix(reader *base.ClassifierDeserializer, p
 func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode {
 
 	numRows, _ := from.Size()
-	if numRows == 450 {
+	if numRows == 480 {
 		fmt.Println("hi")
 	}
 
