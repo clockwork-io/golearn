@@ -234,7 +234,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
 		}
-		fmt.Println("one class", ret)
+		fmt.Println("one class", ret, maxClass)
 		return ret
 	}
 
@@ -260,7 +260,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
 		}
-		fmt.Println("2 columns left", ret)
+		fmt.Println("2 columns left", ret, maxClass, classes)
 		return ret
 	}
 
