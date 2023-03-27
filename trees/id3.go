@@ -135,6 +135,7 @@ type DecisionTreeNode struct {
 	Class     string                       `json:"class_string"`
 	ClassAttr base.Attribute               `json:"-"`
 	SplitRule *DecisionTreeRule            `json:"decision_tree_rule"`
+	Score     float64                      `json:"score"`
 }
 
 func getClassAttr(from base.FixedDataGrid) base.Attribute {
@@ -214,7 +215,7 @@ func (d *DecisionTreeNode) LoadWithPrefix(reader *base.ClassifierDeserializer, p
 
 // InferID3Tree builds a decision tree using a RuleGenerator
 // from a set of Instances (implements the ID3 algorithm)
-func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode {
+func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, parentScore float64) *DecisionTreeNode {
 
 	// Count the number of classes at this node
 	classes := base.GetClassDistribution(from)
@@ -233,6 +234,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			maxClass,
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
+			parentScore * 1.0,
 		}
 		return ret
 	}
@@ -249,7 +251,8 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 
 	// If there are no more non-float Attributes left to split on,
 	// return a DecisionTreeLeaf with the majority class.
-	cols, _ := from.Size()
+	cols, rows := from.Size()
+	score := parentScore * (float64(maxVal) / float64(rows))
 	if cols == 1 {
 		ret := &DecisionTreeNode{
 			LeafNode,
@@ -258,6 +261,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 			maxClass,
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
+			score,
 		}
 		return ret
 	}
@@ -288,6 +292,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 		maxClass,
 		classAttr,
 		nil,
+		score,
 	}
 
 	// Generate the splitting rule
@@ -310,7 +315,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator) *DecisionTreeNode
 	ret.Children = make(map[string]*DecisionTreeNode)
 	for k := range splitInstances {
 		newInstances := splitInstances[k]
-		ret.Children[k] = InferID3Tree(newInstances, with)
+		ret.Children[k] = InferID3Tree(newInstances, with, score)
 	}
 	ret.SplitRule = splitRule
 	return ret
@@ -326,10 +331,10 @@ func (d *DecisionTreeNode) getNestedString(level int) string {
 	}
 	buf.WriteString(tmp.String())
 	if d.Children == nil {
-		buf.WriteString(fmt.Sprintf("Leaf(%s)", d.Class))
+		buf.WriteString(fmt.Sprintf("Leaf(%s, %v)", d.Class, d.Score))
 	} else {
 		var keys []string
-		buf.WriteString(fmt.Sprintf("Rule(%s)", d.SplitRule))
+		buf.WriteString(fmt.Sprintf("Rule(%s, %v)", d.SplitRule, d.Score))
 		for k := range d.Children {
 			keys = append(keys, k)
 		}
@@ -584,10 +589,10 @@ func NewID3DecisionTreeFromRule(prune float64, rule RuleGenerator) *ID3DecisionT
 func (t *ID3DecisionTree) Fit(on base.FixedDataGrid) error {
 	if t.PruneSplit > 0.001 {
 		trainData, testData := base.InstancesTrainTestSplit(on, t.PruneSplit)
-		t.Root = InferID3Tree(trainData, t.Rule)
+		t.Root = InferID3Tree(trainData, t.Rule, 1.0)
 		t.Root.Prune(testData)
 	} else {
-		t.Root = InferID3Tree(on, t.Rule)
+		t.Root = InferID3Tree(on, t.Rule, 1.0)
 	}
 	return nil
 }
