@@ -227,6 +227,10 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, parentScore float
 		for i := range classes {
 			maxClass = i
 		}
+		score := 0.0
+		if maxClass == "1" {
+			score = parentScore * 1.0
+		}
 		ret := &DecisionTreeNode{
 			LeafNode,
 			nil,
@@ -234,7 +238,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, parentScore float
 			maxClass,
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
-			parentScore * 1.0,
+			score,
 		}
 		return ret
 	}
