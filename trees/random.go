@@ -70,7 +70,7 @@ func NewRandomTree(attrs int) *RandomTree {
 
 // Fit builds a RandomTree suitable for prediction
 func (rt *RandomTree) Fit(from base.FixedDataGrid) error {
-	rt.Root = InferID3Tree(from, rt.Rule, 1.0, 0.0)
+	rt.Root = InferID3Tree(from, rt.Rule, 1.0, 0.0, 0.1)
 	return nil
 }
 

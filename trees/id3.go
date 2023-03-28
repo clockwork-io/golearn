@@ -215,7 +215,7 @@ func (d *DecisionTreeNode) LoadWithPrefix(reader *base.ClassifierDeserializer, p
 
 // InferID3Tree builds a decision tree using a RuleGenerator
 // from a set of Instances (implements the ID3 algorithm)
-func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, parentScore float64, maxGain float64) *DecisionTreeNode {
+func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, parentScore float64, maxGain float64, depthMultiplier float64) *DecisionTreeNode {
 
 	// Count the number of classes at this node
 	classes := base.GetClassDistribution(from)
@@ -287,7 +287,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, parentScore float
 	// 		}
 	// 	}
 	// }
-	score = parentScore - 0.1*(1.0-maxGain)
+	score = parentScore - depthMultiplier*(1.0-maxGain)
 
 	// Generate a return structure
 	ret := &DecisionTreeNode{
@@ -309,18 +309,21 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, parentScore float
 
 	// Split the attributes based on this attribute's value
 	var splitInstances map[string]base.FixedDataGrid
+	var childDepthMultiplier float64
 	if _, ok := splitRule.SplitAttr.(*base.FloatAttribute); ok {
 		splitInstances = base.DecomposeOnNumericAttributeThreshold(from,
 			splitRule.SplitAttr, splitRule.SplitVal)
+		childDepthMultiplier = 0.05
 	} else {
 		splitInstances = base.DecomposeOnAttributeValues(from, splitRule.SplitAttr)
+		childDepthMultiplier = 0.1
 	}
 
 	// Create new children from these attributes
 	ret.Children = make(map[string]*DecisionTreeNode)
 	for k := range splitInstances {
 		newInstances := splitInstances[k]
-		ret.Children[k] = InferID3Tree(newInstances, with, score, childMaxGain)
+		ret.Children[k] = InferID3Tree(newInstances, with, score, childMaxGain, childDepthMultiplier)
 	}
 	ret.SplitRule = splitRule
 	return ret
@@ -594,10 +597,10 @@ func NewID3DecisionTreeFromRule(prune float64, rule RuleGenerator) *ID3DecisionT
 func (t *ID3DecisionTree) Fit(on base.FixedDataGrid) error {
 	if t.PruneSplit > 0.001 {
 		trainData, testData := base.InstancesTrainTestSplit(on, t.PruneSplit)
-		t.Root = InferID3Tree(trainData, t.Rule, 1.0, 0.0)
+		t.Root = InferID3Tree(trainData, t.Rule, 1.0, 0.0, 0.1)
 		t.Root.Prune(testData)
 	} else {
-		t.Root = InferID3Tree(on, t.Rule, 1.0, 0.0)
+		t.Root = InferID3Tree(on, t.Rule, 1.0, 0.0, 0.1)
 	}
 	return nil
 }
