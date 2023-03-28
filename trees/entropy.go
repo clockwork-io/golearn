@@ -1,6 +1,7 @@
 package trees
 
 import (
+	"fmt"
 	"math"
 	"sort"
 
@@ -82,6 +83,8 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 			selectedBinaryVal = splitBinaryVal
 		}
 	}
+
+	fmt.Println(selectedAttribute.GetName(), maxGain)
 
 	// Pick the one which maximises IG
 	return &DecisionTreeRule{selectedAttribute, selectedVal}
