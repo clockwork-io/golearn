@@ -597,10 +597,10 @@ func NewID3DecisionTreeFromRule(prune float64, rule RuleGenerator) *ID3DecisionT
 func (t *ID3DecisionTree) Fit(on base.FixedDataGrid) error {
 	if t.PruneSplit > 0.001 {
 		trainData, testData := base.InstancesTrainTestSplit(on, t.PruneSplit)
-		t.Root = InferID3Tree(trainData, t.Rule, 1.0, 0.0, 0.1)
+		t.Root = InferID3Tree(trainData, t.Rule, 1.0, 0.0, 0.0)
 		t.Root.Prune(testData)
 	} else {
-		t.Root = InferID3Tree(on, t.Rule, 1.0, 0.0, 0.1)
+		t.Root = InferID3Tree(on, t.Rule, 1.0, 0.0, 0.0)
 	}
 	return nil
 }
