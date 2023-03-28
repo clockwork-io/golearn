@@ -22,7 +22,7 @@ type InformationGainRuleGenerator struct {
 //
 // IMPORTANT: passing a base.Instances with no Attributes other than the class
 // variable will panic()
-func (r *InformationGainRuleGenerator) GenerateSplitRule(f base.FixedDataGrid) *DecisionTreeRule {
+func (r *InformationGainRuleGenerator) GenerateSplitRule(f base.FixedDataGrid) (*DecisionTreeRule, float64) {
 
 	attrs := f.AllAttributes()
 	classAttrs := f.AllClassAttributes()
@@ -35,7 +35,7 @@ func (r *InformationGainRuleGenerator) GenerateSplitRule(f base.FixedDataGrid) *
 // the information gain amongst the considered Attributes.
 //
 // IMPORTANT: passing a zero-length consideredAttributes parameter will panic()
-func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttributes []base.Attribute, f base.FixedDataGrid) *DecisionTreeRule {
+func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttributes []base.Attribute, f base.FixedDataGrid) (*DecisionTreeRule, float64) {
 
 	var selectedAttribute base.Attribute
 	var selectedBinaryVal float64
@@ -87,7 +87,7 @@ func (r *InformationGainRuleGenerator) GetSplitRuleFromSelection(consideredAttri
 	fmt.Println(selectedAttribute.GetName(), maxGain)
 
 	// Pick the one which maximises IG
-	return &DecisionTreeRule{selectedAttribute, selectedVal}
+	return &DecisionTreeRule{selectedAttribute, selectedVal}, maxGain
 }
 
 //
