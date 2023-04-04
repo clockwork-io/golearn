@@ -262,7 +262,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 
 	// If there are no more non-float Attributes left to split on,
 	// return a DecisionTreeLeaf with the majority class.
-	if cols == 1 || alertProportion < oneProportionThreshold {
+	if cols == 1 {
 		ret := &DecisionTreeNode{
 			LeafNode,
 			nil,
