@@ -15,7 +15,7 @@ type RandomTreeRuleGenerator struct {
 
 // GenerateSplitRule returns the best attribute out of those randomly chosen
 // which maximises Information Gain
-func (r *RandomTreeRuleGenerator) GenerateSplitRule(f base.FixedDataGrid) (*DecisionTreeRule, float64) {
+func (r *RandomTreeRuleGenerator) GenerateSplitRule(f base.FixedDataGrid) *DecisionTreeRule {
 
 	var consideredAttributes []base.Attribute
 
@@ -70,7 +70,8 @@ func NewRandomTree(attrs int) *RandomTree {
 
 // Fit builds a RandomTree suitable for prediction
 func (rt *RandomTree) Fit(from base.FixedDataGrid) error {
-	rt.Root = InferID3Tree(from, rt.Rule, 1.0, 0.0, 0.0)
+	classes := base.GetClassDistribution(from)
+	rt.Root = InferID3Tree(from, rt.Rule, float64(classes["1"]), 0.05)
 	return nil
 }
 
