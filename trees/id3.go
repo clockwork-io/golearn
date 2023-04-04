@@ -129,13 +129,14 @@ func checkSplitEquality(selectedVal float64, splitVal float64,
 
 // DecisionTreeNode represents a given portion of a decision tree.
 type DecisionTreeNode struct {
-	Type      NodeType                     `json:"node_type"`
-	Children  map[string]*DecisionTreeNode `json:"children"`
-	ClassDist map[string]int               `json:"class_dist"`
-	Class     string                       `json:"class_string"`
-	ClassAttr base.Attribute               `json:"-"`
-	SplitRule *DecisionTreeRule            `json:"decision_tree_rule"`
-	Score     float64                      `json:"score"`
+	Type         NodeType                     `json:"node_type"`
+	Children     map[string]*DecisionTreeNode `json:"children"`
+	ClassDist    map[string]int               `json:"class_dist"`
+	Class        string                       `json:"class_string"`
+	ClassAttr    base.Attribute               `json:"-"`
+	SplitRule    *DecisionTreeRule            `json:"decision_tree_rule"`
+	Purity       float64                      `json:"purity"`
+	GlobalRecall float64                      `json:"global_recall"`
 }
 
 func getClassAttr(from base.FixedDataGrid) base.Attribute {
@@ -215,7 +216,7 @@ func (d *DecisionTreeNode) LoadWithPrefix(reader *base.ClassifierDeserializer, p
 
 // InferID3Tree builds a decision tree using a RuleGenerator
 // from a set of Instances (implements the ID3 algorithm)
-func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64, oneProportionThreshold float64) *DecisionTreeNode {
+func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64, globalRecallThreshold float64) *DecisionTreeNode {
 
 	// Count the number of classes at this node
 	classes := base.GetClassDistribution(from)
@@ -227,10 +228,6 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 		for i := range classes {
 			maxClass = i
 		}
-		score := 0.0
-		if maxClass == "1" {
-			score = 2.0 + float64(classes[maxClass])/totalOnes
-		}
 		ret := &DecisionTreeNode{
 			LeafNode,
 			nil,
@@ -238,7 +235,8 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 			maxClass,
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
-			score,
+			1.0,
+			float64(classes[maxClass]) / totalOnes,
 		}
 		return ret
 	}
@@ -253,16 +251,15 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 		}
 	}
 
-	// Getting scores.
+	// Calculate purity and global recall.
 	cols, rows := from.Size()
 	numOnes := float64(classes["1"])
 	purity := numOnes / float64(rows)
-	alertProportion := numOnes / totalOnes
-	score := 2.0*purity + alertProportion
+	globalRecall := numOnes / totalOnes
 
 	// If there are no more non-float Attributes left to split on,
 	// return a DecisionTreeLeaf with the majority class.
-	if cols == 1 {
+	if cols == 1 || globalRecall < globalRecallThreshold {
 		ret := &DecisionTreeNode{
 			LeafNode,
 			nil,
@@ -270,7 +267,8 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 			maxClass,
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
-			score,
+			purity,
+			globalRecall,
 		}
 		return ret
 	}
@@ -301,7 +299,8 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 		maxClass,
 		classAttr,
 		nil,
-		score,
+		purity,
+		globalRecall,
 	}
 
 	// Generate the splitting rule
@@ -324,7 +323,7 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 	ret.Children = make(map[string]*DecisionTreeNode)
 	for k := range splitInstances {
 		newInstances := splitInstances[k]
-		ret.Children[k] = InferID3Tree(newInstances, with, totalOnes, oneProportionThreshold)
+		ret.Children[k] = InferID3Tree(newInstances, with, totalOnes, globalRecallThreshold)
 	}
 	ret.SplitRule = splitRule
 	return ret
@@ -340,10 +339,10 @@ func (d *DecisionTreeNode) getNestedString(level int) string {
 	}
 	buf.WriteString(tmp.String())
 	if d.Children == nil {
-		buf.WriteString(fmt.Sprintf("Leaf(%s, %v)", d.Class, d.Score))
+		buf.WriteString(fmt.Sprintf("Leaf(%s, %v, %v)", d.Class, d.Purity, d.GlobalRecall))
 	} else {
 		var keys []string
-		buf.WriteString(fmt.Sprintf("Rule(%s, %v)", d.SplitRule, d.Score))
+		buf.WriteString(fmt.Sprintf("Rule(%s, %v, %v)", d.SplitRule, d.Purity, d.GlobalRecall))
 		for k := range d.Children {
 			keys = append(keys, k)
 		}
@@ -595,15 +594,15 @@ func NewID3DecisionTreeFromRule(prune float64, rule RuleGenerator) *ID3DecisionT
 }
 
 // Fit builds the ID3 decision tree
-func (t *ID3DecisionTree) Fit(on base.FixedDataGrid) error {
+func (t *ID3DecisionTree) Fit(on base.FixedDataGrid, globalRecallThreshold float64) error {
 	classes := base.GetClassDistribution(on)
 	numOnes := float64(classes["1"])
 	if t.PruneSplit > 0.001 {
 		trainData, testData := base.InstancesTrainTestSplit(on, t.PruneSplit)
-		t.Root = InferID3Tree(trainData, t.Rule, numOnes, 0.05)
+		t.Root = InferID3Tree(trainData, t.Rule, numOnes, globalRecallThreshold)
 		t.Root.Prune(testData)
 	} else {
-		t.Root = InferID3Tree(on, t.Rule, numOnes, 0.05)
+		t.Root = InferID3Tree(on, t.Rule, numOnes, globalRecallThreshold)
 	}
 	return nil
 }
