@@ -596,6 +596,7 @@ func NewID3DecisionTreeFromRule(prune float64, rule RuleGenerator) *ID3DecisionT
 // Fit builds the ID3 decision tree
 func (t *ID3DecisionTree) Fit(on base.FixedDataGrid, globalRecallThreshold float64) error {
 	classes := base.GetClassDistribution(on)
+	fmt.Println(classes)
 	numOnes := float64(classes["1"])
 	if t.PruneSplit > 0.001 {
 		trainData, testData := base.InstancesTrainTestSplit(on, t.PruneSplit)
