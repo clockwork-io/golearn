@@ -221,6 +221,13 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 	// Count the number of classes at this node
 	classes := base.GetClassDistribution(from)
 	classAttr := getClassAttr(from)
+
+	// Calculate purity and global recall.
+	cols, rows := from.Size()
+	numOnes := float64(classes["1"])
+	purity := numOnes / float64(rows)
+	globalRecall := numOnes / totalOnes
+
 	// If there's only one class, return a DecisionTreeLeaf with
 	// the only class available
 	if len(classes) == 1 {
@@ -235,8 +242,8 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 			maxClass,
 			classAttr,
 			&DecisionTreeRule{nil, 0.0},
-			1.0,
-			float64(classes[maxClass]) / totalOnes,
+			purity,
+			globalRecall,
 		}
 		return ret
 	}
@@ -250,12 +257,6 @@ func InferID3Tree(from base.FixedDataGrid, with RuleGenerator, totalOnes float64
 			maxVal = classes[i]
 		}
 	}
-
-	// Calculate purity and global recall.
-	cols, rows := from.Size()
-	numOnes := float64(classes["1"])
-	purity := numOnes / float64(rows)
-	globalRecall := numOnes / totalOnes
 
 	// If there are no more non-float Attributes left to split on,
 	// return a DecisionTreeLeaf with the majority class.
@@ -596,7 +597,6 @@ func NewID3DecisionTreeFromRule(prune float64, rule RuleGenerator) *ID3DecisionT
 // Fit builds the ID3 decision tree
 func (t *ID3DecisionTree) Fit(on base.FixedDataGrid, globalRecallThreshold float64) error {
 	classes := base.GetClassDistribution(on)
-	fmt.Println(classes)
 	numOnes := float64(classes["1"])
 	if t.PruneSplit > 0.001 {
 		trainData, testData := base.InstancesTrainTestSplit(on, t.PruneSplit)
